@@ -1,0 +1,37 @@
+version: '3'
+
+networks:
+  challenge:
+
+services:  
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php
+    tty: true
+    volumes:
+      - ./app:/var/www/html/
+    ports:
+      - 9000:80
+    networks:
+      - challenge
+
+  mysql:
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: mysql
+    restart: unless-stopped
+    tty: true
+    ports: 
+      - 4306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: inventory
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    volumes:
+      - ./dump:/docker-entrypoint-initdb.d
+    networks:
+      - challenge
+
